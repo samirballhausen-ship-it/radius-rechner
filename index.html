@@ -27,29 +27,29 @@
 </head>
 <body>
     <div class="container">
-        <h1>🔧 Radius Finder</h1>
-        <p>Berechne den echten Radius für den Tischler.</p>
+        <h1>🔧 Tresen Radius-Rechner</h1>
+        <p><strong>3 einfache Messungen</strong> – und du hast den exakten Radius für den Tischler!</p>
 
         <div class="visual-guide">
-            <h3>📐 So misst du richtig:</h3>
+            <h3>📐 Dein Plan sieht so aus:</h3>
             <canvas id="visualCanvas" width="350" height="280"></canvas>
-            <p class="help-text">Schau dir die Grafik an - genau diese 3 Linien musst du auf deinem Plan messen!</p>
+            <p class="help-text">Miss einfach diese 3 Linien mit einem Lineal auf deinem ausgedruckten Plan!</p>
         </div>
 
         <div class="step">
-            <label>1. Kalibrierung (Maßstab)</label>
-            <span class="sub-label">Suche auf dem Plan die Maßlinie neben dem Tresen, an der <strong>1.54</strong> steht. Miss diese Linie mit deinem Lineal auf dem Papier.</span>
-            <input type="number" id="inputRef" placeholder="Z.B. 3,1 cm" step="0.1">
+            <label>✅ Schritt 1: Finde die "1.54" Linie</label>
+            <span class="sub-label">Auf deinem Plan: Oben rechts siehst du eine Zahl <strong>"1.54"</strong>. Das ist eine horizontale Linie (wie im Bild oben). Leg dein Lineal genau auf diese Linie und miss, wie lang sie auf dem <strong>Papier</strong> ist (nicht 1,54 m!).</span>
+            <input type="number" id="inputRef" placeholder="Wie viele cm auf dem Papier?" step="0.1">
         </div>
         <div class="step">
-            <label>2. Linie A (Breite)</label>
-            <span class="sub-label">Verbinde die Enden des Bogens. Miss die Länge der Linie.</span>
-            <input type="number" id="inputChord" placeholder="Länge in cm" step="0.1">
+            <label>✅ Schritt 2: Miss die Breite des Bogens</label>
+            <span class="sub-label">Beim Tresen (links unten auf dem Plan): Verbinde die beiden <strong>Enden des geschwungenen Bogens</strong> mit einer geraden Linie. Miss diese Linie mit dem Lineal.</span>
+            <input type="number" id="inputChord" placeholder="Wie viele cm?" step="0.1">
         </div>
         <div class="step">
-            <label>3. Linie B (Tiefe)</label>
-            <span class="sub-label">Miss von der Mitte von Linie A im rechten Winkel bis zum höchsten Punkt des Bogens.</span>
-            <input type="number" id="inputSagitta" placeholder="Höhe in cm" step="0.1">
+            <label>✅ Schritt 3: Miss die Tiefe des Bogens</label>
+            <span class="sub-label">Von der <strong>Mitte der Linie aus Schritt 2</strong>: Miss senkrecht nach oben bis zum <strong>höchsten Punkt</strong> der Kurve (gestrichelte Linie im Plan). Das ist die Tiefe.</span>
+            <input type="number" id="inputSagitta" placeholder="Wie viele cm?" step="0.1">
         </div>
         <button onclick="calculate()">Radius berechnen</button>
         <div class="result-box" id="result">
