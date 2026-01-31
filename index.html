@@ -25,8 +25,11 @@
         button:hover { background-color: #005bb5; }
         .visual-guide { background: #f9f9f9; border-radius: 12px; padding: 20px; margin-bottom: 24px; }
         .visual-guide h3 { margin-top: 0; color: #333; font-size: 16px; text-align: center; }
-        canvas { display: block; margin: 0 auto; border: 1px solid #ddd; border-radius: 8px; background: white; }
+        .photo-guide { max-width: 100%; border-radius: 12px; overflow: hidden; margin: 15px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .photo-guide img { width: 100%; height: auto; display: block; }
+        .step-photo { margin-top: 12px; }
         .help-text { font-size: 11px; color: #999; text-align: center; margin-top: 10px; font-style: italic; }
+        .photo-caption { background: #007aff; color: white; padding: 8px 12px; font-size: 12px; font-weight: 600; text-align: center; }
     </style>
 </head>
 <body>
@@ -34,25 +37,39 @@
         <h1>🔧 Tresen Radius-Rechner</h1>
         <p><strong>3 einfache Messungen</strong> – und du hast den exakten Radius für den Tischler!</p>
 
-        <div class="visual-guide">
-            <h3>📐 Dein Plan sieht so aus:</h3>
-            <canvas id="visualCanvas" width="350" height="280"></canvas>
-            <p class="help-text">Miss einfach diese 3 Linien mit einem Lineal auf deinem ausgedruckten Plan!</p>
+        <div class="step">
+            <label>✅ Schritt 1: Kalibrierung (Maßstab)</label>
+            <span class="sub-label">Suche auf dem Plan die Linie mit der Zahl <strong>"1.54"</strong> (rechts neben dem Tresen). Miss diese Linie mit dem Lineal auf deinem <strong>Papier</strong> in cm.</span>
+
+            <div class="photo-guide step-photo">
+                <div class="photo-caption">📏 So sieht es aus:</div>
+                <img src="https://raw.githubusercontent.com/samirballhausen-ship-it/radius-rechner/master/images/step1.jpg" alt="Schritt 1: Miss die 1.54 Linie" onerror="this.style.display='none'">
+            </div>
+
+            <input type="number" id="inputRef" placeholder="Wie viele cm auf dem Papier?" step="0.1">
         </div>
 
         <div class="step">
-            <label>✅ Schritt 1: Finde die "1.54" Linie</label>
-            <span class="sub-label">Auf deinem Plan: Oben rechts siehst du eine Zahl <strong>"1.54"</strong>. Das ist eine horizontale Linie (wie im Bild oben). Leg dein Lineal genau auf diese Linie und miss, wie lang sie auf dem <strong>Papier</strong> ist (nicht 1,54 m!).</span>
-            <input type="number" id="inputRef" placeholder="Wie viele cm auf dem Papier?" step="0.1">
-        </div>
-        <div class="step">
-            <label>✅ Schritt 2: Miss die Breite des Bogens</label>
-            <span class="sub-label">Beim Tresen (links unten auf dem Plan): Verbinde die beiden <strong>Enden des geschwungenen Bogens</strong> mit einer geraden Linie. Miss diese Linie mit dem Lineal.</span>
+            <label>✅ Schritt 2: Miss die Breite (Linie A)</label>
+            <span class="sub-label">Verbinde beim Tresen die beiden <strong>Enden des Bogens</strong> mit einer geraden Linie (rot). Miss diese Linie.</span>
+
+            <div class="photo-guide step-photo">
+                <div class="photo-caption">🔴 Rote Linie = Linie A:</div>
+                <img src="https://raw.githubusercontent.com/samirballhausen-ship-it/radius-rechner/master/images/step2a.jpg" alt="Schritt 2: Linie A" onerror="this.style.display='none'">
+            </div>
+
             <input type="number" id="inputChord" placeholder="Wie viele cm?" step="0.1">
         </div>
+
         <div class="step">
-            <label>✅ Schritt 3: Miss die Tiefe des Bogens</label>
-            <span class="sub-label">Von der <strong>Mitte der Linie aus Schritt 2</strong>: Miss senkrecht nach oben bis zum <strong>höchsten Punkt</strong> der Kurve (gestrichelte Linie im Plan). Das ist die Tiefe.</span>
+            <label>✅ Schritt 3: Miss die Tiefe (Linie B)</label>
+            <span class="sub-label">Von der <strong>Mitte der roten Linie</strong>: Miss senkrecht (90°) nach oben bis zum höchsten Punkt des Bogens (blaue Linie).</span>
+
+            <div class="photo-guide step-photo">
+                <div class="photo-caption">🔵 Blaue Linie = Linie B:</div>
+                <img src="https://raw.githubusercontent.com/samirballhausen-ship-it/radius-rechner/master/images/step2b.jpg" alt="Schritt 3: Linie B" onerror="this.style.display='none'">
+            </div>
+
             <input type="number" id="inputSagitta" placeholder="Wie viele cm?" step="0.1">
         </div>
         <button onclick="calculate()">Radius berechnen</button>
@@ -62,152 +79,6 @@
         </div>
     </div>
     <script>
-        // Visualisierung zeichnen
-        function drawVisualization() {
-            const canvas = document.getElementById('visualCanvas');
-            const ctx = canvas.getContext('2d');
-
-            // Hintergrund
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // === SCHRITT 1: Kalibrierung ===
-            ctx.fillStyle = '#333';
-            ctx.font = 'bold 13px Arial';
-            ctx.fillText('SCHRITT 1: Kalibrierung', 20, 25);
-
-            // Wand-Linie (1.54m)
-            ctx.strokeStyle = '#000';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(20, 50);
-            ctx.lineTo(150, 50);
-            ctx.stroke();
-
-            // Maßpfeile
-            ctx.strokeStyle = '#666';
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.moveTo(20, 65);
-            ctx.lineTo(150, 65);
-            ctx.moveTo(20, 60);
-            ctx.lineTo(20, 70);
-            ctx.moveTo(150, 60);
-            ctx.lineTo(150, 70);
-            ctx.stroke();
-
-            // Text "1.54"
-            ctx.fillStyle = '#d00';
-            ctx.font = 'bold 16px Arial';
-            ctx.fillText('1.54', 75, 63);
-
-            // Lineal
-            ctx.fillStyle = '#f0f0f0';
-            ctx.strokeStyle = '#999';
-            ctx.fillRect(20, 80, 130, 25);
-            ctx.strokeRect(20, 80, 130, 25);
-            for (let i = 0; i <= 13; i++) {
-                ctx.beginPath();
-                ctx.moveTo(20 + i * 10, 80);
-                ctx.lineTo(20 + i * 10, 85);
-                ctx.stroke();
-            }
-
-            ctx.fillStyle = '#d00';
-            ctx.font = '11px Arial';
-            ctx.fillText('← Miss diese Strecke mit Lineal!', 160, 95);
-
-            // === SCHRITT 2 & 3: Bogen messen ===
-            ctx.fillStyle = '#333';
-            ctx.font = 'bold 13px Arial';
-            ctx.fillText('SCHRITT 2 & 3: Bogen messen', 20, 140);
-
-            // Bogen (Tresen)
-            ctx.strokeStyle = '#000';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.arc(175, 260, 90, Math.PI * 0.65, Math.PI * 0.35, true);
-            ctx.stroke();
-
-            // Endpunkte berechnen
-            const centerX = 175;
-            const centerY = 260;
-            const radius = 90;
-            const angle1 = Math.PI * 0.65;
-            const angle2 = Math.PI * 0.35;
-
-            const x1 = centerX + radius * Math.cos(angle1);
-            const y1 = centerY - radius * Math.sin(angle1);
-            const x2 = centerX + radius * Math.cos(angle2);
-            const y2 = centerY - radius * Math.sin(angle2);
-
-            // Linie A (Sehne) - ROT
-            ctx.strokeStyle = '#ff3b30';
-            ctx.lineWidth = 2.5;
-            ctx.setLineDash([5, 3]);
-            ctx.beginPath();
-            ctx.moveTo(x1, y1);
-            ctx.lineTo(x2, y2);
-            ctx.stroke();
-            ctx.setLineDash([]);
-
-            ctx.fillStyle = '#ff3b30';
-            ctx.font = 'bold 13px Arial';
-            ctx.fillText('Linie A', 175, 220);
-            ctx.font = '10px Arial';
-            ctx.fillText('(Verbinde Enden)', 155, 233);
-
-            // Mittelpunkt der Sehne
-            const midX = (x1 + x2) / 2;
-            const midY = (y1 + y2) / 2;
-
-            // Linie B (Sagitta/Tiefe) - BLAU
-            const topX = centerX + radius * Math.cos(Math.PI / 2);
-            const topY = centerY - radius * Math.sin(Math.PI / 2);
-
-            ctx.strokeStyle = '#007aff';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.moveTo(midX, midY);
-            ctx.lineTo(topX, topY);
-            ctx.stroke();
-
-            // Rechter Winkel Symbol
-            const rectSize = 8;
-            ctx.strokeStyle = '#007aff';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(midX, midY - rectSize);
-            ctx.lineTo(midX + rectSize, midY - rectSize);
-            ctx.lineTo(midX + rectSize, midY);
-            ctx.stroke();
-
-            ctx.fillStyle = '#007aff';
-            ctx.font = 'bold 13px Arial';
-            ctx.fillText('Linie B', 185, 180);
-            ctx.font = '10px Arial';
-            ctx.fillText('(Höhe/Tiefe)', 182, 193);
-
-            // Punkte markieren
-            ctx.fillStyle = '#ff3b30';
-            ctx.beginPath();
-            ctx.arc(x1, y1, 4, 0, Math.PI * 2);
-            ctx.arc(x2, y2, 4, 0, Math.PI * 2);
-            ctx.fill();
-
-            ctx.fillStyle = '#007aff';
-            ctx.beginPath();
-            ctx.arc(topX, topY, 4, 0, Math.PI * 2);
-            ctx.fill();
-
-            // "Tresen" Label
-            ctx.fillStyle = '#666';
-            ctx.font = 'italic 11px Arial';
-            ctx.fillText('Tresen-Bogen', 140, 265);
-        }
-
-        // Beim Laden zeichnen
-        window.addEventListener('load', drawVisualization);
-
         function calculate() {
             let refMeas = parseFloat(document.getElementById('inputRef').value.replace(',', '.'));
             let chordMeas = parseFloat(document.getElementById('inputChord').value.replace(',', '.'));
