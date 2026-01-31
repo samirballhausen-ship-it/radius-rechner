@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anleitung - Radius Rechner</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f2f2f7; color: #1c1c1e; padding: 20px; margin: 0; }
+        .container { max-width: 800px; margin: 0 auto; background: white; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); padding: 30px; }
+        h1 { text-align: center; color: #007aff; }
+        .section { margin: 30px 0; padding: 20px; background: #f9f9f9; border-radius: 12px; }
+        h2 { color: #333; font-size: 18px; margin-bottom: 15px; }
+        p { line-height: 1.6; color: #666; }
+        .highlight { background: #fff3cd; padding: 2px 6px; border-radius: 4px; }
+        canvas { max-width: 100%; border: 1px solid #ddd; border-radius: 8px; margin: 20px 0; display: block; background: white; }
+        .back-link { text-align: center; margin-top: 30px; }
+        .back-link a { color: #007aff; text-decoration: none; font-weight: 600; }
+        .back-link a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📐 Anleitung zum Radius messen</h1>
+
+    <div class="section">
+        <h2>Schritt 1: Kalibrierung (Maßstab bestimmen)</h2>
+        <p>Suche auf deinem Plan die Maßangabe <span class="highlight">1.54</span> (das sind 154 cm in echt). Miss mit einem Lineal, wie lang diese Strecke auf deinem gedruckten Plan ist.</p>
+        <canvas id="canvas1" width="800" height="300"></canvas>
+        <p><strong>Beispiel:</strong> Wenn die Strecke auf dem Papier 3,1 cm lang ist, dann trägst du "3,1" ein.</p>
+    </div>
+
+    <div class="section">
+        <h2>Schritt 2 & 3: Bogen ausmessen</h2>
+        <p>Jetzt musst du zwei Linien am Tresen-Bogen messen:</p>
+        <ul>
+            <li><strong>Linie A (rot):</strong> Verbinde die beiden Enden des Bogens mit einer geraden Linie und miss deren Länge.</li>
+            <li><strong>Linie B (blau):</strong> Miss von der Mitte von Linie A senkrecht nach oben bis zum höchsten Punkt des Bogens.</li>
+        </ul>
+        <canvas id="canvas2" width="800" height="400"></canvas>
+    </div>
+
+    <div class="back-link">
+        <a href="index.html">← Zurück zum Rechner</a>
+    </div>
+</div>
+
+<script>
+// Canvas 1: Kalibrierung
+const ctx1 = document.getElementById('canvas1').getContext('2d');
+ctx1.fillStyle = '#fff';
+ctx1.fillRect(0, 0, 800, 300);
+
+// Title
+ctx1.fillStyle = '#333';
+ctx1.font = 'bold 20px Arial';
+ctx1.fillText('SCHRITT 1: Kalibrieren', 50, 40);
+
+// Wall line
+ctx1.strokeStyle = '#000';
+ctx1.lineWidth = 3;
+ctx1.beginPath();
+ctx1.moveTo(100, 120);
+ctx1.lineTo(400, 120);
+ctx1.stroke();
+
+// Dimension line
+ctx1.strokeStyle = '#000';
+ctx1.lineWidth = 2;
+ctx1.beginPath();
+ctx1.moveTo(100, 90);
+ctx1.lineTo(100, 100);
+ctx1.moveTo(100, 95);
+ctx1.lineTo(400, 95);
+ctx1.moveTo(400, 90);
+ctx1.lineTo(400, 100);
+ctx1.stroke();
+
+// "1.54" text
+ctx1.fillStyle = '#000';
+ctx1.font = 'bold 16px Arial';
+ctx1.fillText('1.54', 240, 85);
+
+// Ruler
+ctx1.fillStyle = '#f0f0f0';
+ctx1.fillRect(100, 170, 300, 40);
+ctx1.strokeStyle = '#999';
+ctx1.strokeRect(100, 170, 300, 40);
+
+// Ruler ticks
+ctx1.strokeStyle = '#666';
+ctx1.lineWidth = 1;
+for (let i = 0; i <= 10; i++) {
+    let x = 100 + (i * 30);
+    ctx1.beginPath();
+    ctx1.moveTo(x, 170);
+    ctx1.lineTo(x, 190);
+    ctx1.stroke();
+}
+
+// Instruction
+ctx1.fillStyle = '#d00';
+ctx1.font = '14px Arial';
+ctx1.fillText('Miss diese Strecke auf deinem Papier (in cm)', 150, 250);
+
+// Canvas 2: Bogen messen
+const ctx2 = document.getElementById('canvas2').getContext('2d');
+ctx2.fillStyle = '#fff';
+ctx2.fillRect(0, 0, 800, 400);
+
+// Title
+ctx2.fillStyle = '#333';
+ctx2.font = 'bold 20px Arial';
+ctx2.fillText('SCHRITT 2 & 3: Bogen messen', 50, 40);
+
+// Arc (Counter)
+const centerX = 400;
+const centerY = 350;
+const radius = 250;
+
+ctx2.strokeStyle = '#000';
+ctx2.lineWidth = 4;
+ctx2.beginPath();
+ctx2.arc(centerX, centerY, radius, Math.PI, 0, false);
+ctx2.stroke();
+
+// Calculate chord endpoints
+const x1 = centerX - radius;
+const y1 = centerY;
+const x2 = centerX + radius;
+const y2 = centerY;
+
+// Chord line (red)
+ctx2.strokeStyle = '#f00';
+ctx2.lineWidth = 3;
+ctx2.setLineDash([10, 5]);
+ctx2.beginPath();
+ctx2.moveTo(x1, y1);
+ctx2.lineTo(x2, y2);
+ctx2.stroke();
+ctx2.setLineDash([]);
+
+// Label A
+ctx2.fillStyle = '#f00';
+ctx2.font = 'bold 16px Arial';
+ctx2.fillText('Linie A', centerX - 30, y1 + 30);
+ctx2.fillText('(Verbindung)', centerX - 50, y1 + 50);
+
+// Midpoint
+const xm = (x1 + x2) / 2;
+const ym = (y1 + y2) / 2;
+
+// Sagitta line (blue) - to top of arc
+const xtop = centerX;
+const ytop = centerY - radius;
+
+ctx2.strokeStyle = '#00f';
+ctx2.lineWidth = 4;
+ctx2.beginPath();
+ctx2.moveTo(xm, ym);
+ctx2.lineTo(xtop, ytop);
+ctx2.stroke();
+
+// Right angle marker
+ctx2.strokeStyle = '#00f';
+ctx2.lineWidth = 2;
+ctx2.beginPath();
+ctx2.moveTo(xm - 15, ym);
+ctx2.lineTo(xm - 15, ym - 15);
+ctx2.lineTo(xm, ym - 15);
+ctx2.stroke();
+
+// Label B
+ctx2.fillStyle = '#00f';
+ctx2.font = 'bold 16px Arial';
+ctx2.fillText('Linie B', xtop + 20, (ym + ytop) / 2);
+ctx2.fillText('(Höhe)', xtop + 20, (ym + ytop) / 2 + 20);
+
+// "Tresen-Bogen" label
+ctx2.fillStyle = '#666';
+ctx2.font = 'italic 14px Arial';
+ctx2.fillText('Tresen-Bogen', 300, 120);
+</script>
+
+</body>
+</html>

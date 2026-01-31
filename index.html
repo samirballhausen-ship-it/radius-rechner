@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tischler Radius Rechner</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f2f2f7; color: #1c1c1e; display: flex; justify-content: center; padding: 20px; margin: 0; }
+        .container { background: white; max-width: 400px; width: 100%; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); padding: 24px; }
+        h1 { font-size: 22px; text-align: center; margin-bottom: 5px; }
+        p { font-size: 14px; color: #666; text-align: center; margin-top: 0; margin-bottom: 20px; }
+        .step { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #eee; }
+        label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 15px; }
+        .sub-label { display: block; font-size: 12px; color: #888; margin-bottom: 8px; font-weight: normal; }
+        input { width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; }
+        input:focus { border-color: #007aff; outline: none; }
+        .result-box { background-color: #e5f1ff; border-radius: 12px; padding: 20px; text-align: center; display: none; }
+        .result-title { font-size: 14px; color: #007aff; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
+        .result-value { font-size: 32px; font-weight: 800; color: #007aff; margin: 10px 0; }
+        button { background-color: #007aff; color: white; border: none; width: 100%; padding: 15px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Radius Finder</h1>
+        <p>Berechne den echten Radius für den Tischler.</p>
+        <div class="step">
+            <label>1. Kalibrierung (Maßstab)</label>
+            <span class="sub-label">Suche auf dem Plan die Maßlinie neben dem Tresen, an der <strong>1.54</strong> steht. Miss diese Linie mit deinem Lineal auf dem Papier.</span>
+            <input type="number" id="inputRef" placeholder="Z.B. 3,1 cm" step="0.1">
+        </div>
+        <div class="step">
+            <label>2. Linie A (Breite)</label>
+            <span class="sub-label">Verbinde die Enden des Bogens. Miss die Länge der Linie.</span>
+            <input type="number" id="inputChord" placeholder="Länge in cm" step="0.1">
+        </div>
+        <div class="step">
+            <label>3. Linie B (Tiefe)</label>
+            <span class="sub-label">Miss von der Mitte von Linie A im rechten Winkel bis zum höchsten Punkt des Bogens.</span>
+            <input type="number" id="inputSagitta" placeholder="Höhe in cm" step="0.1">
+        </div>
+        <button onclick="calculate()">Radius berechnen</button>
+        <div class="result-box" id="result">
+            <div class="result-title">Echter Radius</div>
+            <div class="result-value" id="outputRadius">0 cm</div>
+        </div>
+    </div>
+    <script>
+        function calculate() {
+            let refMeas = parseFloat(document.getElementById('inputRef').value.replace(',', '.'));
+            let chordMeas = parseFloat(document.getElementById('inputChord').value.replace(',', '.'));
+            let sagMeas = parseFloat(document.getElementById('inputSagitta').value.replace(',', '.'));
+            if (!refMeas || !chordMeas || !sagMeas) { alert("Bitte fülle alle drei Felder aus."); return; }
+            let scaleFactor = 154 / refMeas;
+            let realChord = chordMeas * scaleFactor;
+            let realSagitta = sagMeas * scaleFactor;
+            let radius = (Math.pow(realChord, 2) + 4 * Math.pow(realSagitta, 2)) / (8 * realSagitta);
+            document.getElementById('outputRadius').innerText = Math.round(radius) + " cm";
+            document.getElementById('result').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
